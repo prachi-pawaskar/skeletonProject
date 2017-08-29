@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="com.rave.northgate.alfrescoCms" >
+    <parameter name="env" value="dev"/>
+    <parameter name="loginRole" value=""/>
+    <parameter name="browser" value="firefox"/> <!--firefox, chrome or ie-->
+    <parameter name="tag" value="regression"/>  <!--bat, sanity, negative or regression-->
+    <test name="runClass">
+        <classes>
+            <class name="com.prachi.project.skeletonProject.ApiValidation"/>
+        </classes>
+    </test>
+</suite>
