@@ -57,14 +57,14 @@ public class UiSetUp extends Base {
         {
             log.info("UI test running on Chrome browser.");
 
-            String resourceFilePath = "src/main/java/com/rave/northgate/alfrescoCms/drivers/";
+            String resourceFilePath = "src/main/java/com/prachi/project/skeletonProject/drivers/";
             String resourceURL = new File(resourceFilePath).getAbsolutePath();
             System.setProperty("webdriver.chrome.driver", resourceURL +"/chromedriver.exe");
             driver = new ChromeDriver();
             driver.manage().window().maximize();
 
             //Adding implicit wait in seconds.
-            driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+            driver.manage().timeouts().implicitlyWait(90, TimeUnit.SECONDS);
 
             //Get browser version
             Capabilities cap = ((RemoteWebDriver) driver).getCapabilities();
@@ -75,7 +75,7 @@ public class UiSetUp extends Base {
         {
             log.info("UI test running on IE browser.");
 
-            String resourceFilePath = "src/main/java/com/rave/northgate/alfrescoCms/drivers/";
+            String resourceFilePath = "src/main/java/com/prachi/project/skeletonProject/drivers/";
             String resourceURL = new File(resourceFilePath).getAbsolutePath();
             System.setProperty("webdriver.ie.driver", resourceURL +"/IEDriverServer.exe");
             DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();

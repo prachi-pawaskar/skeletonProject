@@ -8,8 +8,10 @@ import com.prachi.project.skeletonProject.enumPackage.SupportedBrowser;
 import com.relevantcodes.extentreports.LogStatus;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.awt.*;
@@ -83,6 +85,62 @@ public class UiKeywords {
             etest.log(LogStatus.FAIL,"Image:" + image);
         }
     }
+
+
+    public static void selectFromDropDown(String elementType, String elementValue, String data,Boolean needObjectMap) throws IOException {
+        String rawElementValue = null;
+        try{
+            if(needObjectMap == true){
+                rawElementValue = Base.getUiValue(elementValue);}
+            else {
+                rawElementValue = elementValue;
+            }
+            log.info("Selecting value for element: " + rawElementValue + " of type: "+ elementType);
+            log.info("Value selected: " + data);
+
+            if (elementType.equalsIgnoreCase("class")) {
+                Select dropDown = new Select(driver.findElement(By.className(rawElementValue)));
+                dropDown.selectByVisibleText(data);
+            }
+            if (elementType.equalsIgnoreCase("xpath")) {
+                Select dropDown = new Select(driver.findElement(By.xpath(rawElementValue)));
+                dropDown.selectByVisibleText(data);
+            }
+            if (elementType.equalsIgnoreCase("id")) {
+                Select dropDown = new Select(driver.findElement(By.id(rawElementValue)));
+                dropDown.selectByVisibleText(data);
+            }
+            if (elementType.equalsIgnoreCase("tagName")) {
+                Select dropDown = new Select(driver.findElement(By.tagName(rawElementValue)));
+                dropDown.selectByVisibleText(data);
+            }
+            if (elementType.equalsIgnoreCase("name")) {
+                Select dropDown = new Select(driver.findElement(By.name(rawElementValue)));
+                dropDown.selectByVisibleText(data);
+            }
+            if (elementType.equalsIgnoreCase("linkText")) {
+                Select dropDown = new Select(driver.findElement(By.linkText(rawElementValue)));
+                dropDown.selectByVisibleText(data);
+            }
+            if (elementType.equalsIgnoreCase("partialLinkText")) {
+                Select dropDown = new Select(driver.findElement(By.partialLinkText(rawElementValue)));
+                dropDown.selectByVisibleText(data);
+            }
+            if (elementType.equalsIgnoreCase("css")) {
+                Select dropDown = new Select(driver.findElement(By.cssSelector(rawElementValue)));
+                dropDown.selectByVisibleText(data);
+            }
+            etest.log(LogStatus.INFO, "Selected data successfully: " + data);
+        } catch (Exception e){
+            log.error(e);
+            log.error("Error in executing keyword: selectFromDropDown");
+            etest.log(LogStatus.ERROR, "Error in executing keyword: selectFromDropDown");
+            etest.log(LogStatus.FAIL, "Failed in executing keyword: selectFromDropDown");
+            String image = etest.addScreenCapture(takeScreenshot());
+            etest.log(LogStatus.FAIL,"Image:" + image);
+        }
+    }
+
 
     public static void clearElement(String elementType, String elementValue, Boolean needObjectMap) throws IOException {
         String rawElementValue = null;
@@ -205,6 +263,58 @@ public class UiKeywords {
             log.error("Error in executing keyword: navigateBack");
             etest.log(LogStatus.ERROR, "Error in executing keyword: navigateBack");
             etest.log(LogStatus.FAIL, "Failed in executing keyword: navigateBack");
+            String image = etest.addScreenCapture(takeScreenshot());
+            etest.log(LogStatus.FAIL,"Image:" + image);
+        }
+        //Wait after click action
+        Thread.sleep(2000);
+    }
+
+
+    public static void switchToIframe(String elementType, String elementValue,Boolean needObjectMap) throws IOException, InterruptedException {
+
+        //Wait for the element to load before clicking it
+        waitUntilElementLoads(elementType,elementValue,needObjectMap);
+        String rawElementValue = null;
+        try{
+
+            if(needObjectMap == true){
+                rawElementValue = Base.getUiValue(elementValue);}
+            else {
+                rawElementValue = elementValue;
+            }
+            log.info("Switching to iframe: " + rawElementValue + " of type: "+ elementType);
+
+            if (elementType.equalsIgnoreCase("id") || elementType.equalsIgnoreCase("name")) {
+                driver.switchTo().frame(rawElementValue);
+            }
+            if (elementType.equalsIgnoreCase("index")) {
+                driver.switchTo().frame(Integer.parseInt(rawElementValue));
+            }
+            etest.log(LogStatus.INFO, "Switched to iFrame: " + rawElementValue + " of type: "+ elementType + " is successful");
+        } catch (Exception e){
+            log.error(e);
+            log.error("Error in executing keyword: switchToIframe");
+            etest.log(LogStatus.ERROR, "Error in executing keyword: switchToIframe");
+            etest.log(LogStatus.FAIL, "Failed in executing keyword: switchToIframe");
+            String image = etest.addScreenCapture(takeScreenshot());
+            etest.log(LogStatus.FAIL,"Image:" + image);
+        }
+        //Wait after click action
+        Thread.sleep(2000);
+    }
+
+    public static void switchToDefaultContent() throws IOException, InterruptedException {
+
+
+        try{
+            driver.switchTo().defaultContent();
+            etest.log(LogStatus.INFO, "Switched to default Frame is successful");
+        } catch (Exception e){
+            log.error(e);
+            log.error("Error in executing keyword: switchToDefaultContent");
+            etest.log(LogStatus.ERROR, "Error in executing keyword: switchToDefaultContent");
+            etest.log(LogStatus.FAIL, "Failed in executing keyword: switchToDefaultContent");
             String image = etest.addScreenCapture(takeScreenshot());
             etest.log(LogStatus.FAIL,"Image:" + image);
         }
@@ -1376,4 +1486,64 @@ public class UiKeywords {
             etest.log(LogStatus.FAIL,"Image:" + image);
         }
     }
+
+    public static String getAbsoluteXPath(WebElement element)
+    {
+        return (String) ((JavascriptExecutor) driver).executeScript(
+                "function absoluteXPath(element) {"+
+                        "var comp, comps = [];"+
+                        "var parent = null;"+
+                        "var xpath = '';"+
+                        "var getPos = function(element) {"+
+                        "var position = 1, curNode;"+
+                        "if (element.nodeType == Node.ATTRIBUTE_NODE) {"+
+                        "return null;"+
+                        "}"+
+                        "for (curNode = element.previousSibling; curNode; curNode = curNode.previousSibling){"+
+            "if (curNode.nodeName == element.nodeName) {"+
+                    "++position;"+
+                    "}"+
+                    "}"+
+                    "return position;"+
+                    "};"+
+
+                    "if (element instanceof Document) {"+
+                    "return '/';"+
+                    "}"+
+
+                    "for (; element && !(element instanceof Document); element = element.nodeType == Node.ATTRIBUTE_NODE ? element.ownerElement : element.parentNode) {"+
+            "comp = comps[comps.length] = {};"+
+                    "switch (element.nodeType) {"+
+                    "case Node.TEXT_NODE:"+
+                    "comp.name = 'text()';"+
+                    "break;"+
+                    "case Node.ATTRIBUTE_NODE:"+
+                    "comp.name = '@' + element.nodeName;"+
+                    "break;"+
+                    "case Node.PROCESSING_INSTRUCTION_NODE:"+
+                    "comp.name = 'processing-instruction()';"+
+                    "break;"+
+                    "case Node.COMMENT_NODE:"+
+                    "comp.name = 'comment()';"+
+                    "break;"+
+                    "case Node.ELEMENT_NODE:"+
+                    "comp.name = element.nodeName;"+
+                    "break;"+
+                    "}"+
+                    "comp.position = getPos(element);"+
+                    "}"+
+
+                    "for (var i = comps.length - 1; i >= 0; i--) {"+
+                    "comp = comps[i];"+
+                    "xpath += '/' + comp.name.toLowerCase();"+
+                    "if (comp.position !== null) {"+
+                    "xpath += '[' + comp.position + ']';"+
+                    "}"+
+                    "}"+
+
+                    "return xpath;"+
+
+                    "} return absoluteXPath(arguments[0]);", element);
+        }
+
 }
